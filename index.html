@@ -507,6 +507,39 @@
 
 </div>
 
+<script>
+/* ==========================================================================
+   禁用 N / S 两个键
+   --------------------------------------------------------------------------
+   本场是单屏（或一分二分线器 —— 两台显示同一画面），也就是说
+   讲者看到的和观众看到的完全一样。而 runtime.js 里：
+
+     N → 屏幕底部弹出逐字稿抽屉
+     S → 弹出一个新窗口显示演讲者视图（当前页 / 下一页 / 逐字稿 / 计时器）
+
+   这两个功能是给「双屏 + 副屏放演讲者视图」设计的。在单屏环境下误触，
+   稿子会直接怼到投影上 —— 翻页笔上任何一个映射到 N 或 S 的键都可能触发。
+
+   这里用捕获阶段拦掉。runtime.js 的 keydown 监听都是冒泡阶段注册的，
+   捕获先跑，stopImmediatePropagation 就能把它们彻底截住。
+
+   runtime.js 本身一个字没改，它是 MIT 授权的第三方文件 ——
+   保持原样，我们的策略写在自己的代码里，将来 skill 升级也不会冲突。
+   ========================================================================== */
+document.addEventListener(
+  'keydown',
+  function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key.toLowerCase();
+    if (k === 'n' || k === 's') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },
+  true,
+);
+</script>
+
 <script src="assets/runtime.js"></script>
 
 <script>
