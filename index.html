@@ -674,16 +674,28 @@
   document.addEventListener(
     'keydown',
     function (e) {
-      if (box.hidden) return;
+      // 守卫必须是「这一页是否激活」，不能是「浮层是否已打开」——
+      // 后者会让 V 键自锁：浮层没开时直接 return，永远打不开。
+      if (!slide.classList.contains('is-active')) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
       var k = e.key;
+
+      // V 键不论开关都要响应：关着就打开，开着就关闭
       if (k === 'v' || k === 'V') {
         e.preventDefault();
         e.stopPropagation();
-        close();
+        if (box.hidden) {
+          open();
+        } else {
+          close();
+        }
         return;
       }
+
+      // 到这里如果浮层没打开，其余按键一律不拦，正常翻页
+      if (box.hidden) return;
+
       if (k === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
