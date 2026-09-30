@@ -671,3 +671,92 @@ body {
 .oss-url span {
   color: var(--accent-2);
 }
+
+/* ==========================================================================
+   开源凭证页
+   --------------------------------------------------------------------------
+   这一页的存在理由是「举证」——前面讲了那么多实验室如何开源，
+   到这页把仓库摆出来。所以版式要像一份清单/凭据，而不是又一段宣言：
+     · 每条仓库一条记录，左边名字右边地址，像 `ls -l` 的输出
+     · 地址给足字号，后排也要能看清、能拍照
+     · 颜色克制，靠留白和分隔线拉出「清单」的秩序感
+   ========================================================================== */
+
+.repo-list {
+  margin-top: 26px;
+  border-top: 1px solid var(--border);
+}
+
+.repo {
+  display: flex;
+  align-items: flex-start;
+  gap: 34px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.repo-idx {
+  flex: 0 0 auto;
+  font-size: 15px;
+  color: var(--text-3);
+  letter-spacing: 0.18em;
+  padding-top: 6px;
+  width: 74px;
+}
+
+.repo-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.repo-name {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  margin-bottom: 8px;
+}
+
+.repo-url {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--accent-2);
+  letter-spacing: 0.01em;
+  word-break: break-all;
+  text-shadow: 0 0 22px rgba(0, 210, 255, 0.35);
+}
+
+.repo-desc {
+  font-size: 16px;
+  color: var(--text-2);
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+.repo-lic {
+  flex: 0 0 auto;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  border: 1px solid var(--border-strong);
+  background: rgba(0, 255, 102, 0.05);
+  padding: 5px 12px;
+  margin-top: 6px;
+}
+
+@media (max-width: 1400px) {
+  .repo {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .repo-idx {
+    width: auto;
+  }
+  .repo-name {
+    font-size: 24px;
+  }
+  .repo-url {
+    font-size: 18px;
+  }
+}
