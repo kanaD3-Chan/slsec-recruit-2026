@@ -108,6 +108,11 @@ const SCREEN = {
     '[ 02 ] slsec-recruit-video  github.com/kanaD3-Chan/slsec-recruit-video  AGPL-3.0',
 };
 
+/** 有 term-block、但页面上还有别的关键信息要一并带上 */
+const SCREEN_APPEND = {
+  '12': '\n\n报名入口  172.16.173.140   （连校园网，现在就能注册）',
+};
+
 const totalChars = pages.reduce((a, p) => a + p.notes.length, 0);
 const totalMin = totalChars / CPS;
 
@@ -164,7 +169,8 @@ writeFileSync(join(ROOT, '逐字稿.md'), md.join('\n'), 'utf8');
 
 const sheet = (p, i) => {
   const next = pages[i + 1];
-  const scr = p.body || SCREEN[p.num];
+  let scr = p.body || SCREEN[p.num] || '';
+  if (scr && SCREEN_APPEND[p.num]) scr += SCREEN_APPEND[p.num];
   const label = p.num === '00' ? '开场片' : `${p.num} / 17`;
   // 每页时长 = 该页字数占全篇的比例 × 全篇总时长。别再除页数，那会把时间摊薄成几秒。
   const secs = Math.max(5, Math.round((p.notes.length / totalChars) * totalMin * 60));
@@ -278,8 +284,8 @@ body {
 /* 「屏幕上」那块：等宽 + 淡底，跟 deck 呼应 */
 .sh-screen {
   font-family: "Maple Mono CN", Consolas, monospace;
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 14.5px;
+  line-height: 1.7;
   white-space: pre-wrap;
   background: var(--box);
   border-left: 4px solid var(--accent);
@@ -292,9 +298,9 @@ body {
 .sh-script p {
   /* 字号给大：讲台上是低头扫一眼，不是坐着精读。
      页面留白多是正常的，那正好是现场用笔做标记的地方。 */
-  font-size: 22px;
-  line-height: 2.0;
-  margin: 0 0 18px;
+  font-size: 21px;
+  line-height: 1.92;
+  margin: 0 0 15px;
 }
 .sh-script b {
   /* 细线下划线式高亮，不是满格荧光笔。
