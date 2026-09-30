@@ -285,12 +285,12 @@ body {
 .sh-screen {
   font-family: "Maple Mono CN", Consolas, monospace;
   font-size: 14.5px;
-  line-height: 1.7;
+  line-height: 1.62;
   white-space: pre-wrap;
   background: var(--box);
   border-left: 4px solid var(--accent);
-  padding: 10px 14px;
-  margin: 0 0 20px;
+  padding: 9px 14px;
+  margin: 0 0 16px;
   color: #333;
 }
 
@@ -299,8 +299,8 @@ body {
   /* 字号给大：讲台上是低头扫一眼，不是坐着精读。
      页面留白多是正常的，那正好是现场用笔做标记的地方。 */
   font-size: 21px;
-  line-height: 1.92;
-  margin: 0 0 15px;
+  line-height: 1.84;
+  margin: 0 0 13px;
 }
 .sh-script b {
   /* 细线下划线式高亮，不是满格荧光笔。
