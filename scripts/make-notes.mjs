@@ -204,6 +204,23 @@ const handout = `<!DOCTYPE html>
    一页纸 = 一页幻灯片，翻纸与翻片一一对应。
    ========================================================================== */
 
+/* 字体自带一份。这个文件可能被单独拷走（打印店、别人的电脑），
+   不引字体的话「屏幕上」那块会掉回 Consolas，跟 deck 对不上。 */
+@font-face {
+  font-family: 'Maple Mono CN';
+  src: url('./assets/fonts/MapleMono-CN-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Maple Mono CN';
+  src: url('./assets/fonts/MapleMono-CN-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
 @page { size: A4 portrait; margin: 14mm 16mm; }
 
 :root {
