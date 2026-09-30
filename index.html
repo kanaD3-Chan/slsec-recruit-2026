@@ -290,14 +290,18 @@
     <!-- 应急兜底：平时完全隐藏，按 V 浮出。现场演示翻车时用它顶。 -->
     <div class="fallback-tip">演示出问题？按 <b>V</b> 播录屏备份</div>
     <div class="fallback" id="fallback" hidden>
-      <video id="fallback-video" playsinline controls preload="metadata">
+      <video id="fallback-video" playsinline preload="metadata">
         <!-- 顺序即优先级：本机有满血版就用满血版，clone 下来的只有 lite 版 -->
         <source src="assets/video/demo-backup-full.mp4" type="video/mp4">
         <source src="assets/video/demo-backup-lite.mp4" type="video/mp4">
       </video>
       <div class="fb-bar">
-        <span>现场演示录制备份 · 67 秒</span>
-        <span>按 <b>V</b> 或 <b>Esc</b> 关闭</span>
+        <div class="fb-left">
+          <button class="fb-btn" id="fb-toggle" type="button">暂停</button>
+          <div class="fb-track" id="fb-track"><div class="fb-fill" id="fb-fill"></div></div>
+          <span class="fb-time" id="fb-time">0:00 / 0:00</span>
+        </div>
+        <div>按 <b>V</b> 或 <b>Esc</b> 关闭</div>
       </div>
     </div>
     <div class="notes">接下来这一段不讲 PPT，直接动手。**你看**，我打开一个很普通的小游戏，就是大家都玩过的那种。它把「我现在有多少只」这个数字，老老实实存在本机内存里。
@@ -606,40 +610,114 @@
 /* ==========================================================================
    演示页的兜底录像控制
    --------------------------------------------------------------------------
-   V 键浮出 / 关闭，Esc 也能关。离开这一页自动停掉并归零 ——
-   免得讲者切回来时画面还停在录屏上。
+   三件事：
+     1. V 键浮出 / 关闭，Esc 也能关；离开这一页自动收起
+     2. 自带控制条（播放暂停 / 进度 / 跳转），不用 <video controls> ——
+        原生控件悬停时从底部浮出，会盖住录屏自己的字幕
+     3. **浮出期间屏蔽键盘导航**：这是关键。翻页笔误触一下方向键就跳页了，
+        而录屏还在放。拦截用捕获阶段 —— runtime.js 的两个 keydown 监听
+        都是冒泡阶段注册的，捕获阶段先跑，stopPropagation 就能把它们拦下。
    ========================================================================== */
 (function () {
-  var slide = document.querySelector('#fallback') && document.querySelector('#fallback').closest('.slide');
   var box = document.getElementById('fallback');
   var video = document.getElementById('fallback-video');
-  if (!slide || !box || !video) return;
+  if (!box || !video) return;
+
+  var slide = box.closest('.slide');
+  var toggle = document.getElementById('fb-toggle');
+  var track = document.getElementById('fb-track');
+  var fill = document.getElementById('fb-fill');
+  var timeEl = document.getElementById('fb-time');
+
+  function fmt(s) {
+    if (!isFinite(s)) s = 0;
+    var m = Math.floor(s / 60);
+    var r = Math.floor(s % 60);
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  function syncTime() {
+    var d = video.duration || 0;
+    var c = video.currentTime || 0;
+    timeEl.textContent = fmt(c) + ' / ' + fmt(d);
+    fill.style.width = d ? (c / d) * 100 + '%' : '0%';
+  }
+
+  function syncBtn() {
+    toggle.textContent = video.paused ? '播放' : '暂停';
+  }
 
   function open() {
     box.hidden = false;
     video.currentTime = 0;
     var p = video.play();
     if (p && p.catch) p.catch(function () {});
+    syncBtn();
   }
+
   function close() {
     box.hidden = true;
     video.pause();
     video.currentTime = 0;
+    syncBtn();
   }
 
-  document.addEventListener('keydown', function (e) {
-    if (!slide.classList.contains('is-active')) return;
-    var k = e.key.toLowerCase();
-    if (k === 'v') {
-      e.preventDefault();
-      box.hidden ? open() : close();
-    } else if (e.key === 'Escape' && !box.hidden) {
-      e.preventDefault();
-      close();
-    }
+  /* ── 键盘 ───────────────────────────────────────────────── */
+  // runtime.js 用到的翻页与快捷键，浮层打开时全部吞掉
+  var BLOCKED = [
+    'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown',
+    'PageUp', 'PageDown', 'Home', 'End', ' ', 'Enter', 'Backspace',
+    'f', 'F', 's', 'S', 'n', 'N', 'o', 'O', 't', 'T', 'a', 'A', 'r', 'R',
+  ];
+
+  // 捕获阶段：比 runtime.js 的冒泡监听先跑
+  document.addEventListener(
+    'keydown',
+    function (e) {
+      if (box.hidden) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      var k = e.key;
+      if (k === 'v' || k === 'V') {
+        e.preventDefault();
+        e.stopPropagation();
+        close();
+        return;
+      }
+      if (k === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        close();
+        return;
+      }
+      if (BLOCKED.indexOf(k) !== -1) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    true,
+  );
+
+  /* ── 控制条 ─────────────────────────────────────────────── */
+  toggle.addEventListener('click', function (e) {
+    e.stopPropagation();
+    video.paused ? video.play() : video.pause();
   });
 
-  // 离开这一页就把兜底层收起来
+  video.addEventListener('play', syncBtn);
+  video.addEventListener('pause', syncBtn);
+  video.addEventListener('timeupdate', syncTime);
+  video.addEventListener('loadedmetadata', syncTime);
+
+  track.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var r = track.getBoundingClientRect();
+    var ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    if (isFinite(video.duration)) video.currentTime = ratio * video.duration;
+    syncTime();
+  });
+
+  /* ── 离开这一页自动收起 ─────────────────────────────────── */
   var wasActive = slide.classList.contains('is-active');
   new MutationObserver(function () {
     var active = slide.classList.contains('is-active');

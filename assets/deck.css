@@ -816,6 +816,57 @@ body {
   color: var(--accent);
 }
 
+/* 自定义控制条。不用 <video controls> 的原生控件 ——
+   原生控件悬停时从底部浮出，正好盖住录屏自己的字幕。 */
+.fb-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.fb-btn {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--accent);
+  background: rgba(0, 255, 102, 0.07);
+  border: 1px solid var(--border-strong);
+  padding: 5px 16px;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: background 0.15s var(--ease);
+}
+.fb-btn:hover {
+  background: rgba(0, 255, 102, 0.16);
+}
+
+/* 进度条：点击可以跳转 */
+.fb-track {
+  position: relative;
+  width: 320px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+.fb-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.fb-time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  min-width: 96px;
+}
+
 /* 页面右下角的调用提示。做得很轻 —— 正常情况下不该被注意到，
    但它必须存在，否则讲者紧张时想不起来有这个保险。 */
 .fallback-tip {
