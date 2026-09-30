@@ -1,0 +1,673 @@
+/* ==========================================================================
+   SLsec 招新宣讲 · 终端主题
+   --------------------------------------------------------------------------
+   配色直接取自招新视频（src/theme/tokens.ts），保证视频和 PPT 连着放不串味：
+     背景 #050505 · 主色 #00FF66 · 青 #00D2FF · 粉 #FF2E63 · 琥珀 #FFB300
+
+   本文件在 base.css 之后加载，负责：
+     1. 覆盖 base.css 的 :root token（把浅色默认值换成终端黑）
+     2. 提供终端风的版式类（chrome / prompt / code block / 光标 / 扫描线）
+   ========================================================================== */
+
+:root {
+  --bg: #050505;
+  --bg-soft: #0a0a0a;
+  --surface: #0a0a0a;
+  --surface-2: #0f0f0f;
+
+  --border: rgba(0, 255, 102, 0.16);
+  --border-strong: rgba(0, 255, 102, 0.34);
+
+  --text-1: #e6e6e6;
+  --text-2: #8b918d;
+  --text-3: #555555;
+
+  --accent: #00ff66;
+  --accent-2: #00d2ff;
+  --accent-3: #ff2e63;
+  --good: #00ff66;
+  --warn: #ffb300;
+  --bad: #ff2e63;
+
+  --grad: linear-gradient(135deg, #00ff66, #00d2ff 60%, #ff2e63);
+  --radius: 4px;
+  --radius-sm: 2px;
+  --radius-lg: 6px;
+  --shadow: 0 0 0 1px rgba(0, 255, 102, 0.06);
+  --shadow-lg: 0 0 0 1px rgba(0, 255, 102, 0.12), 0 12px 40px rgba(0, 0, 0, 0.6);
+
+  --letter-tight: 0;
+  --letter-normal: 0;
+
+  /* 字体变量必须放在这里而不是 fonts.css：
+     base.css 在 fonts.css 之后加载，它自己那套 :root 会把这些变量覆盖掉。
+     deck.css 是最后一份，只有写在这里才压得住。
+     四个角色全指向同一族 —— 这份 deck 是纯终端风，靠字号和字重拉层次。 */
+  --font-mono: 'Maple Mono CN', 'JetBrains Mono', 'Cascadia Mono', Consolas,
+    'DejaVu Sans Mono', monospace;
+  --font-sans: 'Maple Mono CN', 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+  --font-display: 'Maple Mono CN', 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+  --font-serif: 'Maple Mono CN', 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+/* ==========================================================================
+   每一页的底：网格 + 扫描线 + 暗角
+   三层都是 pointer-events:none 的装饰层，不参与内容布局
+   ========================================================================== */
+
+.term-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 背景网格：56px 一方，中心亮、四周被 mask 吃掉 */
+.term-grid {
+  background-image: linear-gradient(rgba(0, 255, 102, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.055) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 25%, transparent 78%);
+  opacity: 0.9;
+}
+
+/* CRT 扫描线：3px 一条，压在最上面（正 z-index，排在内容之后绘制） */
+.term-scan {
+  z-index: 5;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(0, 255, 102, 0.022) 3px,
+    rgba(0, 255, 102, 0.022) 4px
+  );
+  mix-blend-mode: screen;
+}
+
+.term-vignette {
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 50%, transparent 48%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+/*
+ * 层序。
+ *
+ * 早先的写法是「给所有子元素强加 position:relative + z-index:2」，
+ * 结果把页脚、侧边编号、视频遮罩这些本来就靠 absolute 定位的元素
+ * 全改成了普通流 —— 页脚不再贴底、视频不再铺满。逐个 :not() 排除
+ * 只是打地鼠，还会漏。
+ *
+ * 改成靠 CSS 自己的绘制顺序解决：
+ *   1. 给 .slide 建一个隔离的层叠上下文（isolation）
+ *   2. 装饰层用 z-index:-1 —— 负 z-index 的子元素排在
+ *      「非定位块级内容」之前绘制，所以网格和暗角自然落在内容下面
+ *   3. 扫描线用正 z-index —— 排在最后，压在内容上面
+ * 这样所有子元素都保持各自原有的定位方式，一个都不用改。
+ */
+.slide {
+  isolation: isolate;
+}
+
+/* ==========================================================================
+   窗口 chrome：顶部的红黄绿三点 + 路径 + 右上角状态
+   ========================================================================== */
+
+.term-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 30px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.term-chrome .dots {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.term-chrome .dots span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #222;
+}
+.term-chrome .dots span:nth-child(1) {
+  background: #ff5f57;
+}
+.term-chrome .dots span:nth-child(2) {
+  background: #febc2e;
+}
+.term-chrome .dots span:nth-child(3) {
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.term-chrome .path {
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+/* ==========================================================================
+   命令行提示符 / 标题
+   ========================================================================== */
+
+.term-prompt {
+  font-size: 17px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+}
+.term-prompt::before {
+  content: '$ ';
+  color: var(--accent-2);
+  opacity: 0.8;
+}
+
+.term-h1 {
+  font-family: var(--font-mono);
+  font-size: 76px;
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  margin: 0 0 18px;
+  text-shadow: 0 0 34px rgba(0, 255, 102, 0.32), 0 0 80px rgba(0, 255, 102, 0.1);
+}
+
+.term-h2 {
+  font-family: var(--font-mono);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--text-1);
+  margin: 0 0 16px;
+}
+
+.term-h3 {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--warn);
+  margin: 0 0 10px;
+}
+
+.term-lede {
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--text-2);
+  max-width: 74ch;
+}
+
+/* 闪烁方块光标 —— 比透明度渐变更像终端 */
+.term-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.12em;
+  vertical-align: -0.12em;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent);
+  animation: termBlink 1.06s steps(1, end) infinite;
+}
+@keyframes termBlink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   代码块 —— 每页「页面正文」的载体
+   正文本来就是按终端风格写的（$ 开头、- 列表），所以直接原样排，
+   不改写成段落。pre 保空白，行高给足，读起来才像终端输出。
+   ========================================================================== */
+
+.term-block {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  line-height: 1.85;
+  color: var(--text-1);
+  background: #000;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 26px 32px;
+  margin: 0;
+  white-space: pre-wrap;
+  box-shadow: inset 0 0 70px rgba(0, 255, 102, 0.035);
+}
+
+/* 大号的版本，用在封面和收尾这种字少的页 */
+.term-block.lg {
+  font-size: 28px;
+  line-height: 1.8;
+  padding: 34px 40px;
+}
+
+/* 正文里的语法着色 —— 用 span 手标，不做自动高亮 */
+.term-block .c {
+  color: var(--text-3);
+} /* 注释 */
+.term-block .g {
+  color: var(--accent);
+}
+.term-block .y {
+  color: var(--accent-2);
+}
+.term-block .p {
+  color: var(--accent-3);
+}
+.term-block .w {
+  color: var(--warn);
+}
+.term-block .hi {
+  color: #fff;
+}
+
+/* ==========================================================================
+   卡片 / 标签
+   ========================================================================== */
+
+.term-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 22px 26px;
+}
+
+.term-tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-strong);
+  color: var(--accent);
+  background: rgba(0, 255, 102, 0.04);
+  letter-spacing: 0.1em;
+  margin: 0 8px 8px 0;
+}
+.term-tag.cy {
+  color: var(--accent-2);
+  border-color: rgba(0, 210, 255, 0.34);
+  background: rgba(0, 210, 255, 0.05);
+}
+.term-tag.pk {
+  color: var(--accent-3);
+  border-color: rgba(255, 46, 99, 0.34);
+  background: rgba(255, 46, 99, 0.05);
+}
+.term-tag.am {
+  color: var(--warn);
+  border-color: rgba(255, 179, 0, 0.34);
+  background: rgba(255, 179, 0, 0.05);
+}
+
+/* ==========================================================================
+   页脚
+   ========================================================================== */
+
+.term-foot {
+  position: absolute;
+  left: 96px;
+  right: 96px;
+  bottom: 34px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  z-index: 3;
+}
+
+/* ==========================================================================
+   开场片（第 0 页）
+   ========================================================================== */
+
+.slide-video {
+  padding: 0;
+  background: #000;
+}
+
+.slide-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  z-index: 1;
+}
+
+/* 播放前的遮罩。设成 display:none 而不是 opacity，
+   避免它挡住视频上的鼠标事件 */
+.video-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  background: radial-gradient(ellipse at 50% 50%, #0a0a0a 0%, #000 70%);
+  cursor: pointer;
+}
+.video-cover[hidden] {
+  display: none;
+}
+
+.video-cover .play {
+  width: 118px;
+  height: 118px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 44px;
+  box-shadow: 0 0 44px rgba(0, 255, 102, 0.28), inset 0 0 34px rgba(0, 255, 102, 0.1);
+  transition: transform 0.2s var(--ease);
+}
+.video-cover:hover .play {
+  transform: scale(1.06);
+}
+
+.video-cover .tip {
+  font-size: 15px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
+}
+
+/* 播完之后浮出来的一行提示 */
+.video-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 52px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.78);
+  border: 1px solid var(--border);
+  padding: 16px 30px;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+.video-hint.show {
+  opacity: 1;
+}
+
+/* 播完之后浮出来的那句话 —— 顺嘴交代一下这片子是代码生成的，
+   同时也是全场唯一一次「我们真的写代码」的实物证据。 */
+.video-hint .made {
+  font-size: 19px;
+  color: var(--text-1);
+  letter-spacing: 0.04em;
+}
+.video-hint .made b {
+  color: var(--accent);
+  font-weight: 700;
+}
+.video-hint .next {
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   两栏 / 列表这类小工具
+   ========================================================================== */
+
+.term-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+
+.term-note {
+  font-size: 16px;
+  color: var(--text-3);
+  line-height: 1.7;
+}
+
+.term-note b {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* 赛道页左侧那条竖排编号 */
+.term-rail {
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: var(--text-3);
+  line-height: 2.1;
+  text-transform: uppercase;
+}
+.term-rail b {
+  display: block;
+  color: var(--accent);
+  font-weight: 500;
+  margin-top: 14px;
+}
+
+/* 每页顶部右侧的实时状态，纯装饰 */
+.term-status {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
+}
+.term-status .on {
+  color: var(--accent);
+}
+.term-status .on::before {
+  content: '● ';
+}
+
+/* ==========================================================================
+   打印：底色反转只会毁掉终端风，所以打印时保留深色
+   （浏览器需要用户在打印对话框里勾选「背景图形」才会生效）
+   ========================================================================== */
+@media print {
+  .slide {
+    background: #050505 !important;
+  }
+  .term-layer.term-scan,
+  .term-layer.term-grid {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   窄屏兜底：投影一般是 16:9，但万一用笔记本直接看，别让字溢出去
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .term-h1 {
+    font-size: 52px;
+  }
+  .term-h2 {
+    font-size: 36px;
+  }
+  .term-block {
+    font-size: 17px;
+  }
+  .term-block.lg {
+    font-size: 22px;
+  }
+  .term-foot,
+  .slide {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+  .term-foot {
+    left: 48px;
+    right: 48px;
+  }
+}
+
+/* ==========================================================================
+   左右分栏：正文 + 二维码
+   用在两页上 ——「接入终端」（QQ 群码）和「你的第一个 flag」（博客链接）
+   --------------------------------------------------------------------------
+   这一页和别页不同 —— 别页是单向输出，这页要观众动手扫码。
+   所以二维码必须是「真能扫」的，跟视频里那个刻意为难的鬼影正好相反：
+     · 纯黑模块压纯白底（不做反色，反色会有一部分扫码器不认）
+     · 纠错等级 H，四周 4 模块静默区（静默区在 SVG 里已经带上了）
+     · 白底黑块在满屏黑里是一块亮面板，顺带把视线拽过去
+   ========================================================================== */
+
+.split {
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  margin-top: 8px;
+}
+
+.split-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.hw-label {
+  font-size: 15px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
+  margin-bottom: 14px;
+}
+
+.hw-url {
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 30px rgba(0, 255, 102, 0.5);
+  word-break: break-all;
+  line-height: 1.15;
+}
+.hw-url em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hw-rule {
+  height: 3px;
+  width: 190px;
+  background: var(--accent);
+  box-shadow: 0 0 20px var(--accent);
+  margin: 20px 0 26px;
+}
+
+/* 二维码那一栏：不参与压缩，宽度写死，保证模块尺寸不被 flex 挤小 */
+.split-qr {
+  flex: 0 0 auto;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.split-qr img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 46px rgba(0, 255, 102, 0.28);
+}
+
+.split-qr-cap {
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+/* 窄屏时竖排，别把 URL 和二维码挤成两列细条 */
+@media (max-width: 1400px) {
+  .split {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+  }
+  .split-qr {
+    width: 300px;
+  }
+  .hw-url {
+    font-size: 32px;
+  }
+}
+
+/* ==========================================================================
+   收尾页的开源声明
+   --------------------------------------------------------------------------
+   这一页同时干了三件事：喊口号、给联系方式、亮开源。
+   开源那行不能跟联系方式混在一个块里 —— 它是另一种性质的信息
+   （不是"来找我们"，是"东西在这儿，随便看"），所以单独起一块。
+   ========================================================================== */
+
+.oss {
+  margin-top: 30px;
+  padding: 20px 26px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-2);
+  background: rgba(0, 210, 255, 0.02);
+  max-width: 1100px;
+}
+
+.oss-label {
+  font-size: 17px;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+.oss-label b {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+.oss-url {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  line-height: 1.75;
+  color: var(--text-1);
+  letter-spacing: 0.01em;
+}
+.oss-url em {
+  font-style: normal;
+  color: var(--text-3);
+}
+.oss-url span {
+  color: var(--accent-2);
+}

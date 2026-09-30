@@ -1,0 +1,56 @@
+/*
+ * 字体：Maple Mono CN（本地自托管）
+ * ------------------------------------------------------------------
+ * 为什么用 CN 变体：它的汉字字宽恰好是拉丁字符的 2 倍，混排时字符网格
+ * 严格对齐。用普通等宽字体 + 系统中文回退做不到这一点，中文一出现
+ * 整行就会歪 —— 终端风格的版式全靠这个网格撑着。
+ *
+ * 完全不连远程字体：全部走同目录下的 woff2 文件。
+ * 断网、离线演示、拷到别的机器上都能正常显示。
+ *
+ * 版本：Maple Mono v7.9 · https://github.com/subframe7536/maple-font
+ * 许可：SIL Open Font License 1.1
+ */
+
+@font-face {
+  font-family: 'Maple Mono CN';
+  src: url('./MapleMono-CN-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  /* 本地文件加载几乎无延迟，用 block 而不是 swap：
+     宁可等一帧，也不要先闪一下回退字体再跳成等宽 —— 那样布局会抖 */
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Maple Mono CN';
+  src: url('./MapleMono-CN-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Maple Mono CN';
+  src: url('./MapleMono-CN-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+/*
+ * 等宽排版基线。
+ *
+ * 关键是关掉连字和字距微调：
+ *   - Maple Mono 默认会把 => != -> 连成一个字形，而终端风格的骨架
+ *     用大量符号拼版式，连字会直接破坏对齐
+ *   - letter-spacing 和 font-kerning 只要不是 0，网格就会随字号漂移
+ */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0, 'calt' 0, 'dlig' 0;
+  letter-spacing: 0;
+  font-kerning: none;
+  -webkit-font-smoothing: antialiased;
+}

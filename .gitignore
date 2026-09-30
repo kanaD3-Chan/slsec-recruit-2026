@@ -1,0 +1,12 @@
+# ── 字体 TTF：只用于往操作系统里安装（PowerPoint / VS Code 里能选到 Maple Mono）
+#    deck 本身只加载同目录的 woff2，TTF 对网页没用。
+#    需要的话去 https://github.com/subframe7536/maple-font/releases 下 MapleMono-CN.zip
+assets/fonts/ttf/*.ttf
+
+# ── 开发时的渲染检查图，不是交付物
+shots/
+
+# ── 系统杂物
+Thumbs.db
+desktop.ini
+.DS_Store
