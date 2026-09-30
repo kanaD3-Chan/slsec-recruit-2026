@@ -563,9 +563,20 @@ document.addEventListener(
   var hint = document.getElementById('opening-hint');
   if (!slide || !video || !cover) return;
 
-  var started = false;
+  /* 播完到自动翻页之间停多久。给观众留够读那行「纯代码工作流」的时间。
+     设成 0 就关掉自动翻页，改回手动按方向键。 */
+  var AUTO_ADVANCE_MS = 2500;
+  var advanceTimer = null;
+
+  function clearAdvance() {
+    if (advanceTimer) {
+      clearTimeout(advanceTimer);
+      advanceTimer = null;
+    }
+  }
 
   function start() {
+    clearAdvance();
     cover.hidden = true;
     hint.classList.remove('show');
     var p = video.play();
@@ -573,37 +584,63 @@ document.addEventListener(
       p.catch(function () {
         // 被自动播放策略拦下了：把封面放回去，等用户点一下
         cover.hidden = false;
-        started = false;
       });
     }
-    started = true;
   }
 
   cover.addEventListener('click', start);
 
-  // 视频播完 → 浮一行提示，让讲者知道该翻页了
+  // 播完 → 浮出提示，再等一会儿自动翻页
   video.addEventListener('ended', function () {
     hint.classList.add('show');
+    if (AUTO_ADVANCE_MS <= 0) return;
+
+    clearAdvance();
+    advanceTimer = setTimeout(function () {
+      advanceTimer = null;
+      // 用 runtime 支持的 #/N 深链翻页（#/1 是第 0 页，所以下一个是 #/2）。
+      // 比自己模拟键盘事件干净 —— 那是它对外承诺的接口。
+      var m = /^#\/(\d+)/.exec(location.hash || '');
+      var cur = m ? parseInt(m[1], 10) : 1;
+      location.hash = '#/' + (cur + 1);
+    }, AUTO_ADVANCE_MS);
   });
 
-  // 空格 / 回车也能起播（讲者的翻页笔常映射成这两个键）
-  document.addEventListener('keydown', function (e) {
-    if (!slide.classList.contains('is-active')) return;
-    if (e.key === ' ' || e.key === 'Enter') {
-      if (video.paused && !video.ended) {
-        e.preventDefault();
+  /* 空格 / 回车：起播或暂停，**不翻页**。
+  
+     必须是捕获阶段 —— runtime.js 里 ' ' 和 'Enter' 是绑到翻页上的
+     （case ' ': case 'Enter': go(idx+1)），而且它的监听注册得比这里早。
+     同处冒泡阶段的话它先跑，按空格就直接切页了，根本轮不到起播。
+     捕获先于冒泡，stopImmediatePropagation 才能把它截住。
+     
+     片子放完之后不再拦 —— 那时候按空格翻页是符合预期的。 */
+  document.addEventListener(
+    'keydown',
+    function (e) {
+      if (!slide.classList.contains('is-active')) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      if (video.ended) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      clearAdvance();
+      if (video.paused) {
         start();
+      } else {
+        video.pause();
       }
-    }
-  });
+    },
+    true,
+  );
 
   // 离开这一页就停住并归零，下次回来是从头放的完整片子
   function onLeave() {
+    clearAdvance();
     video.pause();
     video.currentTime = 0;
     hint.classList.remove('show');
     cover.hidden = false;
-    started = false;
   }
 
   var wasActive = slide.classList.contains('is-active');
