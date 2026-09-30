@@ -799,13 +799,15 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* 放顶部而不是底部：录屏本身带字幕，字幕压在画面下方，
+     底栏放下面会正好盖住字幕。顶部那块是桌面背景，挡了不心疼。 */
+  top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 14px 28px;
   background: rgba(0, 0, 0, 0.82);
-  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   font-size: 14px;
   color: var(--text-3);
   letter-spacing: 0.1em;
