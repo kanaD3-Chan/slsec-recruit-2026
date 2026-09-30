@@ -33,14 +33,19 @@
 **打印版**：浏览器打开 → `Ctrl+P` → **A4 / 纵向 / 勾选「背景图形」**。
 共 18 页，双面打印 9 张。短页留白是刻意的，那是现场做标记的地方。
 
-三份都从 `index.html` 的 `.notes` 派生。**改完讲稿要重新生成**：
+### 讲稿的单一源头
+
+讲稿散在三处最容易漂（deck 的 notes / md / 打印版），所以定成
+**`index.html` 各页的 `.notes` 是唯一源头**，其余两份全部由脚本生成。
+
+**要改讲稿，改 `index.html` 里的 `.notes`，然后跑：**
 
 ```bash
-node scripts/make-handout.mjs     # 重新生成 讲稿-打印版.html
+node scripts/make-notes.mjs
 ```
 
-> `逐字稿.md` 目前是手工维护的（你直接在 md 上改过一版，已同步回 deck）。
-> 以后建议改 `index.html` 的 notes，再跑上面的脚本 —— 单一源头不容易漂。
+一次更新 `逐字稿.md` 和 `讲稿-打印版.html` 两份。**不要直接改那两个文件**——
+下次跑脚本会被覆盖。
 
 ## 按键
 
@@ -97,7 +102,8 @@ node scripts/make-handout.mjs     # 重新生成 讲稿-打印版.html
 │  ├─ qr-first-step.svg        ← 第 15 页的博客链接二维码（自动生成）
 │  ├─ fonts/                   ← Maple Mono CN，本地自托管
 │  └─ video/opening.mp4        ← 开场片（4K）
-├─ scripts/make-qr.mjs         ← 二维码生成脚本
+├─ scripts/make-notes.mjs       ← 从 index.html 生成下面两份讲稿
+├─ scripts/make-qr.mjs          ← 二维码生成脚本
 ├─ LICENSE                     ← AGPL-3.0
 ├─ THIRD-PARTY.md              ← 第三方资源的出处与许可
 └─ shots/                      ← 开发时的渲染检查图（已 gitignore）

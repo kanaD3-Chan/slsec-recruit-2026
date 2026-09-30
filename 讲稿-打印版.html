@@ -5,9 +5,9 @@
 <title>SLsec 2026 招新宣讲 · 讲台稿</title>
 <style>
 /* ==========================================================================
-   讲台稿（打印版）
+   讲台稿（打印版）· 由 scripts/make-notes.mjs 自动生成，请勿手改
    --------------------------------------------------------------------------
-   用法：浏览器打开 → Ctrl+P → A4 / 纵向 / 边距「默认」/ 勾选「背景图形」
+   打印：浏览器 Ctrl+P → A4 / 纵向 / 勾选「背景图形」
    一页纸 = 一页幻灯片，翻纸与翻片一一对应。
    ========================================================================== */
 
@@ -41,13 +41,11 @@ body {
   box-shadow: 0 2px 14px rgba(0,0,0,.16);
   display: flex;
   flex-direction: column;
-  /* 打印时让分页发生在每一「页」之间 */
   break-after: page;
   page-break-after: always;
 }
 .sheet:last-child { break-after: auto; page-break-after: auto; }
 
-/* ── 页眉 ── */
 .sh-head {
   display: flex;
   align-items: baseline;
@@ -64,18 +62,10 @@ body {
   letter-spacing: .06em;
   flex: 0 0 auto;
 }
-.sh-title {
-  font-size: 23px;
-  font-weight: 700;
-  flex: 1 1 auto;
-}
-.sh-time {
-  font-size: 12px;
-  color: var(--dim);
-  flex: 0 0 auto;
-}
+.sh-title { font-size: 23px; font-weight: 700; flex: 1 1 auto; }
+.sh-time { font-size: 12px; color: var(--dim); flex: 0 0 auto; }
 
-/* ── 屏幕上那块：用等宽 + 淡底，跟 deck 呼应 ── */
+/* 「屏幕上」那块：等宽 + 淡底，跟 deck 呼应 */
 .sh-screen {
   font-family: "Maple Mono CN", Consolas, monospace;
   font-size: 15px;
@@ -88,7 +78,6 @@ body {
   color: #333;
 }
 
-/* ── 讲稿正文 ── */
 .sh-script { flex: 1 1 auto; }
 .sh-script p {
   /* 字号给大：讲台上是低头扫一眼，不是坐着精读。
@@ -113,7 +102,6 @@ body {
   border-radius: 3px;
 }
 
-/* ── 页脚 ── */
 .sh-foot {
   display: flex;
   justify-content: space-between;
@@ -125,7 +113,6 @@ body {
 }
 .sh-page { font-family: "Maple Mono CN", Consolas, monospace; }
 
-/* 开场片那页给个提示条 */
 .sheet.cover .sh-script::before {
   content: "提示：「屏幕上」是投影画面。放片前先起个头，再按空格起播。";
   display: block;
@@ -154,11 +141,11 @@ body {
 <section class="sheet cover">
   <header class="sh-head">
     <span class="sh-num">开场片</span>
-    <span class="sh-title">开场片</span>
+    <span class="sh-title">开场片（招新视频）</span>
     <span class="sh-time">约 1.1 分钟</span>
   </header>
 
-  <pre class="sh-screen">[ 全屏播放招新视频 · 19 秒 ]</pre>
+  
 
   <div class="sh-script">
     <p><b>【放片前，先起个头】</b></p>
