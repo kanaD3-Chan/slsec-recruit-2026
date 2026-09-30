@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SLsec 2026 招新宣讲 · 讲台稿</title>
+<style>
+/* ==========================================================================
+   讲台稿（打印版）
+   --------------------------------------------------------------------------
+   用法：浏览器打开 → Ctrl+P → A4 / 纵向 / 边距「默认」/ 勾选「背景图形」
+   一页纸 = 一页幻灯片，翻纸与翻片一一对应。
+   ========================================================================== */
+
+@page { size: A4 portrait; margin: 14mm 16mm; }
+
+:root {
+  --ink: #111;
+  --dim: #666;
+  --line: #ccc;
+  --accent: #0a7a3a;
+  --box: #f4f4f2;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  /* 正文用无衬线：等宽适合看代码，不适合在讲台上低头速读 */
+  font-family: "Noto Sans SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: #e8e8e6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sheet {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 14mm 16mm;
+  margin: 8mm auto;
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(0,0,0,.16);
+  display: flex;
+  flex-direction: column;
+  /* 打印时让分页发生在每一「页」之间 */
+  break-after: page;
+  page-break-after: always;
+}
+.sheet:last-child { break-after: auto; page-break-after: auto; }
+
+/* ── 页眉 ── */
+.sh-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 14px;
+}
+.sh-num {
+  font-family: "Maple Mono CN", Consolas, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .06em;
+  flex: 0 0 auto;
+}
+.sh-title {
+  font-size: 23px;
+  font-weight: 700;
+  flex: 1 1 auto;
+}
+.sh-time {
+  font-size: 12px;
+  color: var(--dim);
+  flex: 0 0 auto;
+}
+
+/* ── 屏幕上那块：用等宽 + 淡底，跟 deck 呼应 ── */
+.sh-screen {
+  font-family: "Maple Mono CN", Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  background: var(--box);
+  border-left: 4px solid var(--accent);
+  padding: 10px 14px;
+  margin: 0 0 20px;
+  color: #333;
+}
+
+/* ── 讲稿正文 ── */
+.sh-script { flex: 1 1 auto; }
+.sh-script p {
+  /* 字号给大：讲台上是低头扫一眼，不是坐着精读。
+     页面留白多是正常的，那正好是现场用笔做标记的地方。 */
+  font-size: 22px;
+  line-height: 2.0;
+  margin: 0 0 18px;
+}
+.sh-script b {
+  /* 细线下划线式高亮，不是满格荧光笔。
+     讲稿里加粗本来就多（提示词里要求"加粗核心词"），
+     整块涂黄会糊成一片，反而失去锚点的作用。 */
+  color: #000;
+  font-weight: 700;
+  background: linear-gradient(transparent 82%, #ffd84d 82%);
+}
+.sh-script code {
+  font-family: "Maple Mono CN", Consolas, monospace;
+  font-size: .88em;
+  background: var(--box);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── 页脚 ── */
+.sh-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--dim);
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 16px;
+}
+.sh-page { font-family: "Maple Mono CN", Consolas, monospace; }
+
+/* 开场片那页给个提示条 */
+.sheet.cover .sh-script::before {
+  content: "提示：「屏幕上」是投影画面。放片前先起个头，再按空格起播。";
+  display: block;
+  font-size: 13px;
+  color: #8a6d00;
+  background: #fff8e0;
+  border-left: 4px solid #e0b000;
+  padding: 8px 12px;
+  margin-bottom: 18px;
+}
+
+@media print {
+  body { background: #fff; }
+  .sheet {
+    width: auto;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<section class="sheet cover">
+  <header class="sh-head">
+    <span class="sh-num">开场片</span>
+    <span class="sh-title">开场片</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">[ 全屏播放招新视频 · 19 秒 ]</pre>
+
+  <div class="sh-script">
+    <p><b>【放片前，先起个头】</b></p>
+<p>各位同学，晚上好。正式开始之前，先放一条片子。这是实验室自己做的招新宣传片，十九秒，看完我们再说正事。</p>
+<p><b>【播完之后，顺嘴带一句】</b></p>
+<p>片子里所有的画面——终端里滚动的字符、那个沙漏、还有一闪而过的二维码——<b>全部是用代码算出来的</b>。没有一帧是拿剪辑软件拖进去的，配乐也不是下的，是写代码合成的。</p>
+<p>说白了，这条片子就是我们平时干活的样子：<b>能用代码解决的问题，就不手动做</b>。你待会儿看到的这个演示文稿也是同一路数。</p>
+<p>那我们开始。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 01 · SLsec 网络安全实验室</span>
+    <span class="sh-page">1 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">01 / 17</span>
+    <span class="sh-title">SLsec 网络安全实验室</span>
+    <span class="sh-time">约 1.0 分钟</span>
+  </header>
+
+  <pre class="sh-screen">&gt; 信息工程学院 · SLsec 网络安全实验室
+&gt; 安全研究 / 漏洞挖掘 / 竞赛出征</pre>
+
+  <div class="sh-script">
+    <p>台下的各位同学，晚上好。这里是 <b>SLsec 实验室</b>。可能有的同学之前在群里或者宣传海报上见过这个代号。<b>说白了</b>，我们就是信息工程学院旗下主打 <b>CTF 夺旗赛</b>、专注于<b>网络安全实战攻防</b>的学生技术团队。今天不讲空洞的套话，也不端架子，就花十分钟把这个团队到底干什么、能给你什么、以及怎么上车彻底说透。如果你对<b>代码攻防</b>、<b>系统底层</b>或者<b>漏洞挖掘</b>哪怕有一点点好奇，听完今天这几页，你就能找到明确的方向。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 02 · 抛弃幻想，直接上手</span>
+    <span class="sh-page">2 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">02 / 17</span>
+    <span class="sh-title">抛弃幻想，直接上手</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">// 运行前检查
+- 拒绝兴趣小组，面向竞赛与实战
+- 没有老师念课件，不搞填鸭式教学
+- 唯一规矩：直接上手，碰壁，修正</pre>
+
+  <div class="sh-script">
+    <p>先泼一盆冷水，把预期对齐。<b>这个事儿</b>很多刚进校的新生容易误解。首先，我们<b>不是混学分的兴趣小组</b>，平时要刷赛题、打线上对抗，技术强度摆在这里。其次，更别指望有人手把手当保姆。大学里最浪费时间的，就是台上念课件、台下昏昏欲睡。在 SLsec，没有人给你喂饭。<b>说白了</b>，学安全唯一的路径就是<b>自己搭靶场、自己去碰壁、看报错、查源码</b>。我们聚在一个实验室，是为了在卡壳时互相拍砖，不是坐在这等别人填鸭。想学真家伙，就得拿出<b>直接上手的狠劲</b>。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 03 · 实验室的三大底牌</span>
+    <span class="sh-page">3 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">03 / 17</span>
+    <span class="sh-title">实验室的三大底牌</span>
+    <span class="sh-time">约 1.2 分钟</span>
+  </header>
+
+  <pre class="sh-screen">[OK] 技术交流：从内核 Pwn 到密码学
+[OK] 实战机会：组队出征，学校报销差旅
+[OK] 团队知识库：历代踩坑笔记与题解</pre>
+
+  <div class="sh-script">
+    <p>既然门槛不低，你凭什么来？实验室能给你什么？<b>你看</b>，核心就三张底牌。第一是<b>纯粹的技术氛围</b>。在普通寝室你聊栈溢出、聊 RCE，室友可能觉得你在念咒，但在实验室，从底层内核到密码学推导，随时有人能接住你的话题。第二是<b>充足的实战机会</b>。强网杯、国赛 CISCN，只要你打进线下决赛，<b>往返路费和酒店住宿学校全额报销</b>，只管放手去打。第三是<b>代代传承的知识库</b>。历届师傅踩坑积累的 <b>Writeup 和出题笔记</b>全部保留在内网和他们的博客上。你不需要在大海里捞针，踩在前人的肩膀上，能少走大半年弯路。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 04 · 我们的日常工作流</span>
+    <span class="sh-page">4 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">04 / 17</span>
+    <span class="sh-title">我们的日常工作流</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">- Tech-Share：内部技术分享，复现 0day
+- 以赛代练：周末组队打 CTF，赛后复盘
+- 完全开源：靶场平台与自研赛题源码公开</pre>
+
+  <div class="sh-script">
+    <p>平时实验室的日常到底是什么样？<b>说白了</b>就三件事。第一项是技术分享，不搞形式主义，哪个师傅刚啃下一道神仙题，或者互联网上新爆出了某个框架的 <b>0day 漏洞</b>，大家就会拉出白板，就近找个周末复现。第二项是<b>以赛代练</b>。有时周末线上比赛一开，大家聚在一起开几罐可乐，分工切题，通宵抓 flag，赛后复盘总结。第三项是<b>开源精神</b>。我们自己写的安全工具、搭建的<b>靶场平台</b>以及出过的赛题源码，全部公开。你从这里汲取养分，未来羽翼丰满，也一样能开源反哺给后来的学弟学妹。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 05 · 五大赛道：找准入口</span>
+    <span class="sh-page">5 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">05 / 17</span>
+    <span class="sh-title">五大赛道：找准入口</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">- Web     漏洞利用，反馈直接
+- Pwn     二进制与内核利用
+- Reverse 逆向扒核心算法
+- Crypto  密码学稳定拿分
+- Misc    取证分析，脑洞无界</pre>
+
+  <div class="sh-script">
+    <p>打 CTF 从来不是单打独斗，而是小队协同作战。安全领域非常广，没人能全盘通吃，所以战队划分为<b>五个核心赛道</b>。<b>你看</b>，这五个方向没有高低优劣，但对胃口的要求完全不同。有人喜欢在网页逻辑和网络协议里找破绽，选 <b>Web</b>；有人喜欢跟汇编、内存指针硬碰硬，选 <b>Pwn</b>；有人沉迷拆解黑盒程序，选 <b>Reverse</b>；数学直觉敏锐的同学，在 <b>Crypto</b> 简直如鱼得水；涉猎极广、脑洞很大的，<b>Misc</b> 就是最佳主场。接下来五页，大家逐一对号入座。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 06 · Web 安全</span>
+    <span class="sh-page">6 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">06 / 17</span>
+    <span class="sh-title">Web 安全</span>
+    <span class="sh-time">约 1.0 分钟</span>
+  </header>
+
+  <pre class="sh-screen">// 攻击面：SQL注入、上传、RCE、反序列化
+- 适合谁：入门首选，反馈直接，看得见效果</pre>
+
+  <div class="sh-script">
+    <p>首先讲 <b>Web 安全</b>。对于很多零基础的新生，通常建议先从这里摸索。为什么？因为<b>反馈极其直接</b>。你用代理工具抓个包，改改参数，一个 SQL 注入瞬间拖出后台数据，或者上传脚本直接拿到服务器控制权限，你能立刻在浏览器里<b>亲眼看到攻击结果</b>。这个方向对准的是 HTTP 协议缺陷、各种 Web 框架漏洞以及经典的<b>反序列化攻击</b>。只要你写过简单的网页代码，明白前后端是怎么通信的，顺着这条线摸下去，很快就能体会到破解防线的乐趣。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 07 · Pwn</span>
+    <span class="sh-page">7 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">07 / 17</span>
+    <span class="sh-title">Pwn</span>
+    <span class="sh-time">约 1.2 分钟</span>
+  </header>
+
+  <pre class="sh-screen">// 攻击面：栈溢出、堆利用、格式化字符串
+- 适合谁：喜欢底层，C 语言功底扎实</pre>
+
+  <div class="sh-script">
+    <p>第二个方向是 <b>Pwn</b>，也就是二进制漏洞利用。这是攻防里极硬核的一块。<b>你看</b>，Web 攻防大多在应用层和业务逻辑里找漏洞，而 Pwn 则是把刀刃直接刺向<b>操作系统的内存底层</b>。比如一段 C 代码少做了一道边界检查，我们就能通过<b>栈溢出</b>覆盖函数返回地址，强行劫持 CPU 的指令指针；或者利用精妙的<b>堆内存利用</b>，甚至打入内核拿到 Root 权限。这个方向需要啃透 <b>x86 汇编、虚拟内存机制与系统调用</b>。如果你骨子里就喜欢底层架构，Pwn 能让你见识到代码在内存里最真实的运行形态。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 08 · Reverse</span>
+    <span class="sh-page">8 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">08 / 17</span>
+    <span class="sh-title">Reverse</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">// 核心：逆向工程，扒出程序核心算法
+- 适合谁：热爱解谜，享受一层层剥开逻辑</pre>
+
+  <div class="sh-script">
+    <p>第三个赛道是 <b>Reverse</b>，软件逆向工程。写程序是把设计图纸砌成大厦，逆向则是把编译好的软件直接拆回图纸。赛题扔过来的往往就一个编译好的二进制文件，没有任何源码。你要把文件拖进 <b>IDA Pro</b> 这类反编译工具里，在密密麻麻的反汇编代码中理顺执行逻辑，过掉反调试机制，<b>扒出隐藏的核心加密算法</b>。<b>说白了</b>，这就是一场高智商侦探游戏。不需要话多，只要你能静得下心，一层层抽丝剥茧剥离混淆，<b>最后的密钥</b>就是对你长时间推导最好的回馈。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 09 · Crypto</span>
+    <span class="sh-page">9 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">09 / 17</span>
+    <span class="sh-title">Crypto</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">// 攻击面：RSA、AES、椭圆曲线、格
+- 适合谁：对数学敏感，团队里最稳的得分点</pre>
+
+  <div class="sh-script">
+    <p>第四个赛道是 <b>Crypto 密码学</b>。在许多大型赛事里，决定队伍排名的关键往往就是密码学师傅。这个赛道不要求写上千行的工程业务，但极度看重你的<b>数学敏感度</b>。题目全部围绕现代加密算法展开，比如 <b>RSA 参数缺陷、AES 密文模式利用、椭圆曲线离散对数，甚至是格密码理论</b>。出题人给你密文和加密逻辑，暗中藏了一个数学构造陷阱。<b>你看</b>，如果你在数论、代数上有直觉，写几行 Python 脚本推导出私钥，你就是队伍里<b>最稳、最可靠的得分重器</b>。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 10 · Misc &amp; OSINT</span>
+    <span class="sh-page">10 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">10 / 17</span>
+    <span class="sh-title">Misc &amp; OSINT</span>
+    <span class="sh-time">约 57 秒</span>
+  </header>
+
+  <pre class="sh-screen">// 核心：隐写术、流量分析、日志取证、情报
+- 适合谁：脑洞大、知识面杂、入门门槛最低</pre>
+
+  <div class="sh-script">
+    <p>第五个方向，<b>Misc 杂项与 OSINT 开源网络情报</b>。这是<b>门槛最平缓、玩法最多样</b>的领域。它涵盖的面极杂：从一张图片的文件尾里提取隐写文件，从几百兆的流量包里溯源黑客攻击链，从系统内存镜像里提取密码，或者通过一张街景照片里的阴影角度与建筑轮廓<b>定位出地理坐标</b>。<b>这个事儿</b>特别考验信息检索能力和脑洞。只要你平时喜欢折腾奇奇怪怪的工具、对未知线索充满好奇心，Misc 就是你最快能斩获分数的地方。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 11 · 现场演示：内存里改一个数</span>
+    <span class="sh-page">11 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">11 / 17</span>
+    <span class="sh-title">现场演示：内存里改一个数</span>
+    <span class="sh-time">约 1.5 分钟</span>
+  </header>
+
+  <pre class="sh-screen">[1] CE 附加到游戏进程
+[2] 扫描当前的数量值
+[3] 让数量变化 → 再扫一次 → 地址收敛到几个
+[4] 改掉它</pre>
+
+  <div class="sh-script">
+    <p>接下来这一段不讲 PPT，直接动手。<b>你看</b>，我打开一个很普通的小游戏，就是大家都玩过的那种。它把「我现在有多少只」这个数字，老老实实存在本机内存里。</p>
+<p>我先用 CE 附加到这个进程，按当前的数量扫一遍——第一次会扫出成千上万个地址。然后我让游戏里的数量变化一下，再扫一遍，候选地址就掉到几十个；再变一次，基本就剩两三个了。<b>这个收敛过程就是内存扫描的全部原理</b>，没有任何魔法。</p>
+<p>改掉它。<b>注意，这里没有用任何漏洞</b>——没有溢出、没有越权，只是这个程序把关键数据放在了本地内存，而本地内存是你能直接改的。所以<b>所有把校验放在本地的程序，都挡不住这一下</b>。这也是我们做 Pwn 的起点：先理解数据在内存里长什么样，才谈得上操纵它。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 12 · 上车路线：从零到第一步</span>
+    <span class="sh-page">12 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">12 / 17</span>
+    <span class="sh-title">上车路线：从零到第一步</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">01 夯实基础：虚拟机装 Kali，学 Linux 与 Py
+02 刷题进阶：CTFHub 技能树与攻防世界
+03 沉淀输出：每题写 Writeup，讲透才算懂</pre>
+
+  <div class="sh-script">
+    <p>肯定有同学会打退堂鼓：我现在啥也不会，能行吗？完全没问题。我们规划的路线非常明确。<b>第一步夯实基础</b>，用一到两个月装好虚拟机和 Kali Linux，把基础命令和 Python 脚本练熟，来参加分享会选好赛道。<b>第二步刷题进阶</b>，直奔 <b>CTFHub 技能树</b>打底，再去<b>攻防世界</b>刷题打怪。记住一条硬规矩：<b>做完题必须写 Writeup</b>。解出赛题不是终点，把攻击路径完整复现并写出题解，能站在白板前把原理讲得一清二楚，这个漏洞才算真正被你吃透了。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 13 · 擂台见：公费出征主流赛场</span>
+    <span class="sh-page">13 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">13 / 17</span>
+    <span class="sh-title">擂台见：公费出征主流赛场</span>
+    <span class="sh-time">约 1.1 分钟</span>
+  </header>
+
+  <pre class="sh-screen">- 内部选拔：长期观察，看持续的解题记录
+- 组队出征：征战 CISCN、强网杯 主流赛事
+- 公费报销：打进线下决赛，路费住宿全包</pre>
+
+  <div class="sh-script">
+    <p>基础打牢之后，就该去真正的赛场亮剑了。<b>说白了</b>，实验室选主力没有花架子，也不看一次两次的发挥——<b>是长期观察出来的</b>。你平时在内部训练赛里解了多少题、卡住的时候是怎么啃下来的、跟队友配合得怎么样，大家都看在眼里。攒够了这份记录，就跟着学长学姐组队出征 <b>CISCN 全国大学生信息安全竞赛、强网杯</b>等国内标杆赛事。只要打进线下决赛，<b>往返路费和酒店住宿全部由学校报销</b>。你不需要为差旅掏一分钱，唯一的任务就是坐在决赛赛场里，把对手靶机上的 flag 一个一个拿下来。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 14 · 接入终端</span>
+    <span class="sh-page">14 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">14 / 17</span>
+    <span class="sh-title">接入终端</span>
+    <span class="sh-time">约 1.2 分钟</span>
+  </header>
+
+  <pre class="sh-screen">- 招新对象：大一、大二在读学生
+- 基地直达：科技楼 S605B
+- 进群验证：院系 - 专业 - 学号
+- 到访之前：群里 @管理员 问一声</pre>
+
+  <div class="sh-script">
+    <p>最后来看怎么加入。本次招新<b>限定在大一和大二在读学生</b>。上车有两种方式。第一种，扫码加入招新 QQ 群，先在群里建立联系。<b>注意验证信息格式</b>：必须备注'院系 - 专业 - 学号'——这一步是为了挡机器人，不是挡你。</p>
+<p>第二种，直接来线下面基，我们的物理实验室在<b>科技楼 S605B</b>。不过过来之前，<b>先在群里 @ 一下管理员或者群主</b>，确认门开没开、有没有人在，免得白跑一趟。</p>
+<p>群里随时都有人，问技术问题也行，问路也行。<b>你甚至可以现在就掏手机扫一下，进群打个招呼</b>——顺便看看这个群平时到底在聊什么。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 15 · 你的第一个 flag</span>
+    <span class="sh-page">15 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">15 / 17</span>
+    <span class="sh-title">你的第一个 flag</span>
+    <span class="sh-time">约 56 秒</span>
+  </header>
+
+  <pre class="sh-screen">- 藏法很朴素，不用任何黑客工具
+- 浏览器里翻一翻、看看源码，多半就找到了</pre>
+
+  <div class="sh-script">
+    <p>最后不放什么总结陈词了，留个小东西给有兴趣的人。刚才开场片里那台机器 <code>cat /flag</code> 吐出来一行 flag —— <b>那不是特效</b>，我们真的在博客里埋了一个，就在屏幕上这个地址的那篇文章里。</p>
+<p>藏法很朴素，不需要什么黑客工具：浏览器打开翻一翻，多半就撞见了。<b>想试就拍一下这页，不感兴趣跳过也完全没关系</b> —— 这不是作业，没人检查你。但如果你真把它挖出来了，那就算你在 SLsec 迈出的第一步。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 16 · 我们说自己开源，源码在这儿</span>
+    <span class="sh-page">16 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">16 / 17</span>
+    <span class="sh-title">我们说自己开源，源码在这儿</span>
+    <span class="sh-time">约 1.4 分钟</span>
+  </header>
+
+  <pre class="sh-screen">[ 01 ] slsec-recruit-2026   github.com/kanaD3-Chan/slsec-recruit-2026   AGPL-3.0
+[ 02 ] slsec-recruit-video  github.com/kanaD3-Chan/slsec-recruit-video  AGPL-3.0</pre>
+
+  <div class="sh-script">
+    <p>前面讲了那么多实验室怎么开源，<b>这一页不是再说一遍，是给凭证</b>。屏幕上这两个地址，现在就可以打开。</p>
+<p>上面那个是<b>你现在看的这份演示文稿</b>——字体、版式、连生成那两个二维码的脚本都在里面。下面那个是<b>刚才开场那条片子</b>，从画面到配乐全是代码，一帧都没有用剪辑软件拖过。除了配乐我们后续进行了些许修改。</p>
+<p>两个都是 AGPL 协议。<b>这意味着你可以随便拿去用、拿去改，但改完也得开源</b>，不能拿去做成闭源的东西卖钱。</p>
+<p>我们选 AGPL 而不是更宽松的 MIT，是刻意的：<b>实验室一直讲「反哺社区」，那就得保证从这儿拿走的东西继续流下去</b>。不然开源就只是一句好听的话。</p>
+<p>有兴趣的直接去翻，代码写得怎么样你们自己评判。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>下页 → 17 · 拒绝填鸭 只敬真知</span>
+    <span class="sh-page">17 / 18</span>
+  </footer>
+</section>
+
+<section class="sheet">
+  <header class="sh-head">
+    <span class="sh-num">17 / 17</span>
+    <span class="sh-title">拒绝填鸭 只敬真知</span>
+    <span class="sh-time">约 1.9 分钟</span>
+  </header>
+
+  <pre class="sh-screen">&gt; 科技楼 S605B
+&gt; 招新群 1093791593
+&gt; 终端已就绪，等你来</pre>
+
+  <div class="sh-script">
+    <p>最后把实验室一直恪守的信条送给大家：<b>拒绝填鸭，只敬真知</b>。网络安全从来不是靠背概念背出来的，更不是在课堂里划重点划出来的。真正的技术，是终端里跳出的成百上千行报错、是反汇编窗口里枯燥的单步调试、以及拿到 Shell 瞬间的心跳加速堆出来的。在大学里，你可以按部就班混过四年，也可以选择跟我们聚在一起，<b>在黑底绿字的终端里找到能钻研下去的热爱</b>。我们不问你现在的起点，只看你愿不愿意亲自动手。<b>SLsec 的终端已经就绪，科技楼 S605B 等你来</b>。</p>
+<p>收尾可以把群号再念一遍，让大家有个明确的下一步动作 —— 想来的先扫码进群，其它的事群里说。</p>
+<p>最后那行开源声明别一念而过。<b>我们一直讲「反哺社区」，那连自己的招新材料都得开源，不然就只是口号。</b>这份演示文稿、刚才那条片子，还有片子的全部生成源码，都在 GitHub 上，AGPL 协议——谁都能拿去用、拿去改，而且改完也得开源。有兴趣的直接去翻源码，里面连配乐都是代码合成的。</p>
+  </div>
+
+  <footer class="sh-foot">
+    <span>全篇结束</span>
+    <span class="sh-page">18 / 18</span>
+  </footer>
+</section>
+</body>
+</html>
