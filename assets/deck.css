@@ -760,3 +760,75 @@ body {
     font-size: 18px;
   }
 }
+
+/* ==========================================================================
+   演示页的应急兜底录像
+   --------------------------------------------------------------------------
+   现场演示内存改数值最容易翻车（游戏更新、投屏延迟、CE 被拦）。
+   这一层平时完全不存在，按 V 才浮出来 —— 不占版面，也不需要现场找文件。
+
+   为什么用 <video> 的两个 <source>：
+     满血版（234MB）只在本机存在，用于投影；lite 版（50MB）才进仓库。
+     浏览器按顺序试，第一个加载不了就自动退到第二个。
+     所以同一条 HTML，你本地放的是高清版，别人 clone 下来放的是 lite 版。
+   ========================================================================== */
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+.fallback[hidden] {
+  display: none;
+}
+
+.fallback video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.fallback .fb-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  background: rgba(0, 0, 0, 0.82);
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
+}
+.fallback .fb-bar b {
+  color: var(--accent);
+}
+
+/* 页面右下角的调用提示。做得很轻 —— 正常情况下不该被注意到，
+   但它必须存在，否则讲者紧张时想不起来有这个保险。 */
+.fallback-tip {
+  position: absolute;
+  right: 96px;
+  bottom: 92px;
+  z-index: 3;
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
+  opacity: 0.5;
+}
+.fallback-tip b {
+  color: var(--accent-2);
+  border: 1px solid var(--border-strong);
+  padding: 1px 7px;
+  margin: 0 3px;
+}

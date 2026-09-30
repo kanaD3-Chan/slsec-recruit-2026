@@ -286,6 +286,20 @@
     </div>
 
     <div class="term-foot"><span>LIVE DEMO · 讲者在操作，请勿走开</span><span>11 / 17</span></div>
+
+    <!-- 应急兜底：平时完全隐藏，按 V 浮出。现场演示翻车时用它顶。 -->
+    <div class="fallback-tip">演示出问题？按 <b>V</b> 播录屏备份</div>
+    <div class="fallback" id="fallback" hidden>
+      <video id="fallback-video" playsinline controls preload="metadata">
+        <!-- 顺序即优先级：本机有满血版就用满血版，clone 下来的只有 lite 版 -->
+        <source src="assets/video/demo-backup-full.mp4" type="video/mp4">
+        <source src="assets/video/demo-backup-lite.mp4" type="video/mp4">
+      </video>
+      <div class="fb-bar">
+        <span>现场演示录制备份 · 67 秒</span>
+        <span>按 <b>V</b> 或 <b>Esc</b> 关闭</span>
+      </div>
+    </div>
     <div class="notes">接下来这一段不讲 PPT，直接动手。**你看**，我打开一个很普通的小游戏，就是大家都玩过的那种。它把「我现在有多少只」这个数字，老老实实存在本机内存里。
 
 我先用 CE 附加到这个进程，按当前的数量扫一遍——第一次会扫出成千上万个地址。然后我让游戏里的数量变化一下，再扫一遍，候选地址就掉到几十个；再变一次，基本就剩一两个了。**这个收敛过程就是内存扫描的全部原理**，没有任何魔法。
@@ -584,6 +598,54 @@
     } else {
       onLeave();
     }
+  }).observe(slide, {attributes: true, attributeFilter: ['class']});
+})();
+</script>
+
+<script>
+/* ==========================================================================
+   演示页的兜底录像控制
+   --------------------------------------------------------------------------
+   V 键浮出 / 关闭，Esc 也能关。离开这一页自动停掉并归零 ——
+   免得讲者切回来时画面还停在录屏上。
+   ========================================================================== */
+(function () {
+  var slide = document.querySelector('#fallback') && document.querySelector('#fallback').closest('.slide');
+  var box = document.getElementById('fallback');
+  var video = document.getElementById('fallback-video');
+  if (!slide || !box || !video) return;
+
+  function open() {
+    box.hidden = false;
+    video.currentTime = 0;
+    var p = video.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+  function close() {
+    box.hidden = true;
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (!slide.classList.contains('is-active')) return;
+    var k = e.key.toLowerCase();
+    if (k === 'v') {
+      e.preventDefault();
+      box.hidden ? open() : close();
+    } else if (e.key === 'Escape' && !box.hidden) {
+      e.preventDefault();
+      close();
+    }
+  });
+
+  // 离开这一页就把兜底层收起来
+  var wasActive = slide.classList.contains('is-active');
+  new MutationObserver(function () {
+    var active = slide.classList.contains('is-active');
+    if (active === wasActive) return;
+    wasActive = active;
+    if (!active) close();
   }).observe(slide, {attributes: true, attributeFilter: ['class']});
 })();
 </script>

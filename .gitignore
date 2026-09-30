@@ -6,6 +6,11 @@ assets/fonts/ttf/*.ttf
 # ── 开发时的渲染检查图，不是交付物
 shots/
 
+# ── 演示兜底录像的满血版（234MB）
+#    只在本机用于投影；仓库里提交的是 demo-backup-lite.mp4（50MB）。
+#    deck 里 <video> 挂了两个 <source>：满血版排前面，加载不到就自动退到 lite。
+assets/video/demo-backup-full.mp4
+
 # ── 系统杂物
 Thumbs.db
 desktop.ini
