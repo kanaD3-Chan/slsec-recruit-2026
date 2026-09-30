@@ -885,3 +885,32 @@ body {
   padding: 1px 7px;
   margin: 0 3px;
 }
+
+/* 备份录像缺失时的提示块（仓库里那份 deck 会走到这里） */
+.fb-missing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  padding: 60px;
+}
+.fb-missing[hidden] { display: none; }
+.fb-missing-t {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.fb-missing-d {
+  font-size: 17px;
+  color: var(--text-2);
+  line-height: 1.9;
+}
+.fb-missing-d code {
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,.07);
+  padding: 2px 8px;
+  color: var(--text-1);
+}

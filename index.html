@@ -286,10 +286,16 @@
     <div class="fallback-tip">演示出问题？按 <b>V</b> 播录屏备份</div>
     <div class="fallback" id="fallback" hidden>
       <video id="fallback-video" playsinline preload="metadata">
-        <!-- 顺序即优先级：本机有满血版就用满血版，clone 下来的只有 lite 版 -->
+        <!-- 只有本机这一份。应急录像不随仓库分发，原因见 README -->
         <source src="assets/video/demo-backup-full.mp4" type="video/mp4">
-        <source src="assets/video/demo-backup-lite.mp4" type="video/mp4">
       </video>
+      <div class="fb-missing" id="fb-missing" hidden>
+        <div class="fb-missing-t">备份录像不在本机</div>
+        <div class="fb-missing-d">
+          这段录屏没有随仓库分发。<br>
+          演示机上应存在 <code>assets/video/demo-backup-full.mp4</code>。
+        </div>
+      </div>
       <div class="fb-bar">
         <div class="fb-left">
           <button class="fb-btn" id="fb-toggle" type="button">暂停</button>
@@ -769,6 +775,18 @@ document.addEventListener(
     e.stopPropagation();
     video.paused ? video.play() : video.pause();
   });
+
+  /* 录像文件不存在时给个明确提示，而不是留个空白播放器让人对着发呆。
+     仓库里那份 deck 就没有这个文件 —— 这是有意的，原因见 README。 */
+  var missing = document.getElementById('fb-missing');
+  var lastSource = video.querySelector('source:last-of-type');
+  if (lastSource) {
+    lastSource.addEventListener('error', function () {
+      if (missing) missing.hidden = false;
+      video.style.display = 'none';
+      document.querySelector('.fb-bar .fb-left').style.visibility = 'hidden';
+    });
+  }
 
   video.addEventListener('play', syncBtn);
   video.addEventListener('pause', syncBtn);
